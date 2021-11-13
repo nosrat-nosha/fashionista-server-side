@@ -46,27 +46,16 @@ async function run() {
 				.toArray();
 			res.json(result);
 		});
-		//cancel Order
-		app.delete("/products/:id"),
-			async (req, res) => {
-				const id = req.params.id;
-				console.log(id);
-				const query = { _id: ObjectId(id) };
-				const result = await productsCollection.deleteOne(query);
-				console.log("delete", result);
-				res.json(result);
-			};
-		//review
-		// app.post("/review", async (req, res) => {
-		// 	const reviewData = req.body;
-		// 	const result = await reviewCollection.insertOne(reviewData);
-		// 	console.log(reviewData);
-		// 	res.json(result);
-		// });
+		//all order
+		app.get("/allOrders", async (req, res) => {
+			const result = await productCollection.find({}).toArray();
+			res.send(result);
+		});
+
 		app.post("/review", async (req, res) => {
 			const result = await reviewCollection.insertOne(req.body);
 			// console.log(reviewData);
-			res.send(result);
+			res.json(result);
 		});
 		//show review
 		app.get("/review", async (req, res) => {
@@ -96,29 +85,29 @@ async function run() {
 			}
 			// console.log(result);
 		});
-		//Get single service
-		// app.get("/services/:id", async (req, res) => {
-		// 	const id = req.params.id;
-		// 	console.log("hitting special id", id);
-		// 	const query = { _id: ObjectId(id) };
-		// 	const service = await touristPlace.findOne(query);
-		// 	res.json(service);
-		// });
-		//Delete Api
-		// app.delete("/services/:id", async (req, res) => {
-		// 	const id = req.params.id;
-		// 	const query = { _id: ObjectId(id) };
-		// 	const service = await touristPlace.deleteOne(query);
-		// 	res.json(service);
-		// });
+		//check admin
+		app.get("/checkAdmin/:email", async (req, res) => {
+			const result = await usersCollection
+				.find({ email: req.params.email })
+				.toArray();
+			console.log(result);
+			res.send(result);
+		});
 
-		// POST API
+		//add products and insert value in explore POST API
 		app.post("/products", async (req, res) => {
 			const products = req.body;
 			console.log("hit data", products);
 
 			const result = await productsCollection.insertOne(products);
 			console.log(result);
+			res.json(result);
+		});
+		//Delete
+		app.delete("/products/:id", async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: ObjectId(id) };
+			const result = await productsCollection.deleteOne(query);
 			res.json(result);
 		});
 	} finally {
